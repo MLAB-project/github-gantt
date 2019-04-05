@@ -217,7 +217,6 @@ function processIssues(issues, completion, idArray) {
             var labelString = lines[j].replace(config.LABEL_STRING, '');
             if (utilities.isString(labelString)) {
               labelString = labelString.trim();
-              
               // Find label in realm
               let label = realm.objects('Label').filtered('name = $0', labelString)[0];
               if (utilities.isRealmObject(label)) {
@@ -227,9 +226,6 @@ function processIssues(issues, completion, idArray) {
             }
           }
           if (!lines[j].indexOf(config.PROGRESS_STRING)) {
-            console.log(lines[j])
-            console.log(lines[j].replace(config.PROGRESS_STRING, ''))
-            console.log(utilities.sanitizeFloat(lines[j].replace(config.PROGRESS_STRING, '')))
             progress = utilities.sanitizeFloat(lines[j].replace(config.PROGRESS_STRING, ''));
           }
         }
