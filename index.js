@@ -227,6 +227,9 @@ function processIssues(issues, completion, idArray) {
             }
           }
           if (!lines[j].indexOf(config.PROGRESS_STRING)) {
+            console.log(lines[j])
+            console.log(lines[j].replace(config.PROGRESS_STRING, ''))
+            console.log(utilities.sanitizeFloat(lines[j].replace(config.PROGRESS_STRING, '')))
             progress = utilities.sanitizeFloat(lines[j].replace(config.PROGRESS_STRING, ''));
           }
         }
@@ -357,7 +360,7 @@ app.get('/refreshData', function (req, res) {
 });
 
 app.post('/updateIssue', bodyParser.json(), function (req, res) {
-  if (!req.body || utilities.isObject(req.body)) {
+  if (!req.body || !utilities.isObject(req.body)) {
     return res.sendStatus(400);
   }
   let chartTask = req.body;
@@ -369,7 +372,6 @@ app.post('/updateIssue', bodyParser.json(), function (req, res) {
       task.end_date = new Date(chartTask.end_date);
       task.duration = utilities.sanitizeInt(chartTask.duration);
       task.progress = utilities.sanitizeFloat(chartTask.progress);
-      
       var lines = task.body.split('\r\n');
       for (var j = 0; j < lines.length; j++) {
         if (!lines[j].indexOf(config.START_DATE_STRING)) {
@@ -378,7 +380,7 @@ app.post('/updateIssue', bodyParser.json(), function (req, res) {
         if (!lines[j].indexOf(config.DUE_DATE_STRING)) {
           lines[j] = config.DUE_DATE_STRING + " " + dateFormat(task.end_date, "mm-dd-yyyy");
         }
-        if (!lines[j].indexOf(config.PROGRESS_STRING && utilities.isNumber(task.progress))) {
+        if (!lines[j].indexOf(config.PROGRESS_STRING) && utilities.isNumber(task.progress)) {
           lines[j] = config.PROGRESS_STRING + " " + task.progress.toFixed(2);
         }
       }
@@ -394,7 +396,7 @@ app.post('/updateIssue', bodyParser.json(), function (req, res) {
   }
 });
 
-app.listen(process.env.PORT || 3000, function () {
-  let port = (process.env.PORT || 3000);
+app.listen(process.env.PORT || 3535, function () {
+  let port = (process.env.PORT || 3535);
   console.log('Github-Gantt listening on port ' + port);
 });
