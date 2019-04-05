@@ -51,7 +51,8 @@
       width: calc(100% - 120px);
       border-spacing:5px;
       display: table;
-      color: white;
+      font-weight: bold;
+      color: black;
     }
     #legendItem {
       display:table-cell;
@@ -61,14 +62,43 @@
       width: 1%;
       white-space: nowrap;
     }
+    .color-yokoyama {
+      color: red
+    }
+    .color-mt {
+      color: green
+    }
+    .color-may {
+      color: blue
+    }
+    .color-yu {
+      color: pink
+    }
+    .color-matsushima {
+      color: purple
+    }
+    .color-sugar {
+      color: yellow
+    }
+    .color-gatchan0807 {
+      color: cyan
+    }
     </style>
-<body onresize="zoomToFit()">
+<body onload="zoomToFit()">
   <div id="container">
     <div id="legend">
+      開発ユニットガントチャート
+      <span class="color-yokoyama">●</span>よこやまさん /
+      <span class="color-mt">●</span>MTさん /
+      <span class="color-may">●</span>めいさん /
+      <span class="color-yu">●</span>ゆうさん /
+      <span class="color-matsushima">●</span>まつしまさん /
+      <span class="color-sugar">●</span>しゅがーさん /
+      <span class="color-gatchan0807">●</span>がっちゃん
     </div>
     <div style="text-align: right;">
       <button class="buttonload" onclick="refresh(this)" id="refreshButton">
-        Refresh
+        更新
       </button>
     </div>
   </div>
@@ -149,19 +179,18 @@
         
         // Handle labels
         var legend = document.getElementById("legend");
-        while (legend.hasChildNodes()) {
-          legend.removeChild(legend.lastChild);
-        }
-        
-        let labels = data.labels;
-        for (index in labels) {
-          let label = labels[index];
-          var div = document.createElement("DIV");
-          div.id = "legendItem";
-          div.innerHTML = label.name;
-          div.style.backgroundColor = label.color;
-          legend.appendChild(div);
-        }
+        // while (legend.hasChildNodes()) {
+        //   legend.removeChild(legend.lastChild);
+        // }
+        // let labels = data.labels;
+        // for (index in labels) {
+        //   let label = labels[index];
+        //   var div = document.createElement("DIV");
+        //   div.id = "legendItem";
+        //   div.innerHTML = label.name;
+        //   div.style.backgroundColor = label.color;
+        //   legend.appendChild(div);
+        // }
       });
     });
 
@@ -171,13 +200,13 @@
     refresh(document.getElementById("refreshButton"));
     
     function refresh(element) {
-      element.innerHTML = '<i class="fa fa-refresh fa-spin"></i>Working';
+      element.innerHTML = '<i class="fa fa-refresh fa-spin"></i>更新中';
       
       client.get("/refreshData", function(response) {
         gantt.clearAll(); 
         gantt.load("/data");
         
-        element.innerText = "Refresh";
+        element.innerText = "更新";
       });
     };
 
