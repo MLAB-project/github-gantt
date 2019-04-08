@@ -1,5 +1,5 @@
 const express = require('express');
-const app = express();
+const ipfilter = require('express-ipfilter').IpFilter;
 const GitHub = require('octokat');
 const Realm = require('realm');
 const path = require('path');
@@ -7,6 +7,11 @@ const dateFormat = require('dateformat');
 const utilities = require('./utilities');
 const config = require('./config/config');
 const bodyParser = require('body-parser');
+
+const app = express();
+
+const ips = ['127.0.0.1', 'localhost', '::1', '36.3.241.231', '39.110.206.184', '223.134.8.107'];
+app.use(ipfilter(ips, {mode:'allow'}));
 
 // Realm Model Definition
 const TaskSchema = {
