@@ -10,7 +10,7 @@ const bodyParser = require('body-parser');
 
 const app = express();
 
-const ips = ['127.0.0.1', 'localhost', '::1', '36.3.241.231', '39.110.206.184', '223.134.8.107'];
+const ips = ['127.0.0.1', 'localhost', '::1', '36.3.241.231', '39.110.206.184', '223.134.8.107', '10.16.253.130'];
 app.use(ipfilter(ips, {mode:'allow'}));
 
 // Realm Model Definition
