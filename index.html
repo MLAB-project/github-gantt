@@ -13,12 +13,15 @@
       height:100%; 
       padding:0px; 
       margin:0px; 
-      overflow: hidden;
     }
     .weekend{ 
       background: #BD7990!important; 
       color:white !important;
     }
+    .gantt_task_scale, .gantt_task_vscroll {
+      background-color: lightblue;
+    }
+    
     .buttonload {
       background-color: #4CAF50;
       border: none;
@@ -38,17 +41,23 @@
     .status_line{
       background-color: #0ca30a;
     }
+    .header-logo {
+      width: 100%;
+      text-align: center;
+      font-weight: bold;
+      padding: 10px 0;
+    }
+    .legend-wrapper {
+      width: 100%;
+    }
     #container {
-      height: 40px;
+      height: 100px;
       width: 100%;
       display: flex;
     }
     #legend {
       height: 40px;
-      width: -moz-calc(100% - 120px);
-      width: -webkit-calc(100% - 120px);
-      width: -o-calc(100% - 120px);
-      width: calc(100% - 120px);
+      width: 100%;
       border-spacing:5px;
       display: table;
       font-weight: bold;
@@ -62,39 +71,15 @@
       width: 1%;
       white-space: nowrap;
     }
-    .color-yokoyama {
-      color: red
-    }
-    .color-mt {
-      color: green
-    }
-    .color-may {
-      color: blue
-    }
-    .color-yu {
-      color: pink
-    }
-    .color-matsushima {
-      color: purple
-    }
-    .color-sugar {
-      color: yellow
-    }
-    .color-gatchan0807 {
-      color: cyan
-    }
     </style>
 <body onload="zoomToFit()">
   <div id="container">
-    <div id="legend">
-      開発ユニットガントチャート
-      <span class="color-yokoyama">●</span>よこやまさん /
-      <span class="color-mt">●</span>MTさん /
-      <span class="color-may">●</span>めいさん /
-      <span class="color-yu">●</span>ゆうさん /
-      <span class="color-matsushima">●</span>まつしまさん /
-      <span class="color-sugar">●</span>しゅがーさん /
-      <span class="color-gatchan0807">●</span>がっちゃん
+    <div class="legend-wrapper">
+      <div class="header-logo">
+        開発ユニットガントチャート
+      </div>
+      <div id="legend">
+      </div>
     </div>
     <div style="text-align: right;">
       <button class="buttonload" onclick="refresh(this)" id="refreshButton">
@@ -102,7 +87,7 @@
       </button>
     </div>
   </div>
-  <div id="gantt_here" style='position: absolute;top: 40px;bottom: 0px;right: 0px;left: 0px;'></div>
+  <div id="gantt_here" style='position: absolute;top: 100px;bottom: 0px;right: 0px;left: 0px;'></div>
   <script type="text/javascript">
     var HttpClient = function() {
       this.get = function(aUrl, aCallback) {
@@ -179,18 +164,18 @@
         
         // Handle labels
         var legend = document.getElementById("legend");
-        // while (legend.hasChildNodes()) {
-        //   legend.removeChild(legend.lastChild);
-        // }
-        // let labels = data.labels;
-        // for (index in labels) {
-        //   let label = labels[index];
-        //   var div = document.createElement("DIV");
-        //   div.id = "legendItem";
-        //   div.innerHTML = label.name;
-        //   div.style.backgroundColor = label.color;
-        //   legend.appendChild(div);
-        // }
+        while (legend.hasChildNodes()) {
+          legend.removeChild(legend.lastChild);
+        }
+        let labels = data.labels;
+        for (index in labels) {
+          let label = labels[index];
+          var div = document.createElement("DIV");
+          div.id = "legendItem";
+          div.innerHTML = label.name;
+          div.style.backgroundColor = label.color;
+          legend.appendChild(div);
+        }
       });
     });
 
@@ -224,7 +209,7 @@
       if (i == scaleConfigs.length) {
         i--;
       }
-      applyConfig(scaleConfigs[i], project);
+      applyConfig(scaleConfigs[2], project);
       gantt.render();
     };
     
@@ -243,8 +228,8 @@
       gantt.config.subscales = config.subscales;
 
       if (dates) {
-        gantt.config.start_date = gantt.date.add(dates.start_date, -1, config.unit);
-        gantt.config.end_date = gantt.date.add(gantt.date[config.unit + "_start"](dates.end_date), 2, config.unit);
+        gantt.config.start_date = gantt.date.add(dates.start_date, -2, config.unit);
+        gantt.config.end_date = gantt.date.add(gantt.date[config.unit + "_start"](dates.end_date), 3, config.unit);
       } 
       else {
         gantt.config.start_date = gantt.config.end_date = null;
