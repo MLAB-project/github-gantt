@@ -11,7 +11,26 @@ const bodyParser = require('body-parser');
 const app = express();
 
 const ips = ['127.0.0.1', 'localhost', '::1', '36.3.241.231', '39.110.206.184', '223.134.8.107', '10.16.253.130'];
-app.use(ipfilter(ips, {mode:'allow'}));
+
+app.use(function(req, res, next) {
+  let ipAddr = req.headers["x-forwarded-for"];
+
+  if (ipAddr){
+    const list = ipAddr.split(",");
+    ipAddr = list[list.length-1];
+
+    if (ips.includes(ipAddr)) {
+      next();
+    } else { 
+      res.status(403).end('forbidden');
+    }
+  } else {
+    ipAddr = req.connection.remoteAddress;
+    next();
+  }
+});
+
+// app.use(ipfilter(ips, {mode:'allow'}));
 
 // Realm Model Definition
 const TaskSchema = {
