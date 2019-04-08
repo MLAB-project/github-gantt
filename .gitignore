@@ -10,7 +10,6 @@ node_modules
 *.realm.lock
 *.realm.management
 /realm-object-server
-/config/config.js
 /config/*.realm
 /config/*.realm.lock
 /config/*.realm.management
