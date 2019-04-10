@@ -8,10 +8,10 @@ module.exports = {
   GITHUB_REPO_NAME: process.env.GITHUB_GANTT_REPO_NAME,
   
   // Configuration for the labels in Github issues to search for
-  START_DATE_STRING: "#### 🗓 Start Date:",
-  DUE_DATE_STRING: "#### 🗓 Expected Date:",
-  LABEL_STRING: "#### 🏷 Label:",
-  PROGRESS_STRING: "#### 📈 Progress (0-1):",
+  START_DATE_STRING: "#### 🗓 開始日:",
+  DUE_DATE_STRING: "#### 🗓 期限日:",
+  LABEL_STRING: "#### 🏷 事業部ラベル:",
+  PROGRESS_STRING: "#### 📈 進捗度（0〜1）:",
   
   // Configuration to use Realm Mobile Platform
   RMP_ADMIN_TOKEN: "",
