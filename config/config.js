@@ -12,6 +12,7 @@ module.exports = {
   DUE_DATE_STRING: "#### 🗓 期限日:",
   LABEL_STRING: "#### 🏷 事業部ラベル:",
   PROGRESS_STRING: "#### 📈 進捗度（0〜1）:",
+  CATEGORY_STRING: "#### 📂 親タスク:",
   
   // Configuration to use Realm Mobile Platform
   RMP_ADMIN_TOKEN: "",

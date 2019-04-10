@@ -68,6 +68,8 @@ const TaskSchema = {
     level: {type: 'int', optional: true},
     // ( number from 0 to 1 ) the task progress.
     progress: {type: 'double', optional: true},
+    // the task's category.
+    category: {type: 'string', optional: true},
     // specifies whether the task branch will be opened initially 
     // (to show child tasks).
     open: {type: 'bool', optional: true},
@@ -219,6 +221,7 @@ function processIssues(issues, completion, idArray) {
       var labelName = null;
       var color = null;
       var progress = null;
+      var category = null;
       
       // find keywords
       if (issue.body != null) {
@@ -235,6 +238,13 @@ function processIssues(issues, completion, idArray) {
             let date = new Date(lines[j].replace(config.DUE_DATE_STRING, ''));
             if (utilities.isDate(date)) {
               dueDate = date;
+            }
+          }
+          if (!lines[j].indexOf(config.CATEGORY_STRING)) {
+            let _category = lines[j].replace(config.CATEGORY_STRING, '');
+            if (utilities.isString(_category)) {
+              _category = _category.trim();
+              category = _category
             }
           }
           if (!lines[j].indexOf(config.LABEL_STRING)) {
@@ -270,6 +280,7 @@ function processIssues(issues, completion, idArray) {
         label: labelName,
         color: color,
         progress: progress,
+        category: category,
       }, true);
       
       idArray.push(issue.id);
@@ -305,13 +316,19 @@ function processIssues(issues, completion, idArray) {
 }
 
 function getTaskChartData() {
-  let tasks = realm.objects('Task').filtered('isDeleted = false AND state = "open" AND end_date != null').sorted([['label', true], ['start_date', false]]);
+  let tasks = realm.objects('Task').filtered('isDeleted = false AND state = "open" AND end_date != null').sorted([['label', true], ['category', true], ['start_date', false]]);
   var taskData = {data: []};
   for (index in tasks) {
     let task = tasks[index];
+
+    let _text = task.text
+    if (task.category !== null) {
+     _text = task.category + " => " + task.text
+    }
+
     let formattedTask = {
       id: task.id,
-      text: task.text,
+      text: _text,
       start_date: dateFormat(task.start_date, "mm-dd-yyyy"),
       duration: task.duration,
       end_date: dateFormat(task.end_date, "mm-dd-yyyy"),

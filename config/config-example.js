@@ -12,6 +12,7 @@ module.exports = {
   DUE_DATE_STRING: "#### 🗓 Expected Date:",
   LABEL_STRING: "#### 🏷 Label:",
   PROGRESS_STRING: "#### 📈 Progress (0-1):",
+  CATEGORY_STRING: "#### 📂 Category:",
   
   // Configuration to use Realm Mobile Platform
   RMP_ADMIN_TOKEN: "",
