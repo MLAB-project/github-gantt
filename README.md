@@ -11,6 +11,13 @@ This project seeks to simplify this disconnect and bring Gantt charting together
 is parsed for specific search strings to identify the start/end dates, which label to use for bar coloring, and progress. The data is aggregated in a Realm accessed by a Node.js Express server.
 
 ## Setup
+
+Install dependencies
+
+    sudo apt update
+    sudo apt install nodejs npm
+
+
 First you will need to configure the server, run:
 ```
 // Mac
