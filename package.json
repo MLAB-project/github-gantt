@@ -6,7 +6,7 @@
   "dependencies": {
     "body-parser": "^1.19.0",
     "dateformat": "^2.0.0",
-    "dhtmlx-gantt": "^7.0.11",
+    "dhtmlx-gantt": "^6.3.7",
     "express": "^4.17.1",
     "express-ipfilter": "^1.1.2",
     "octokat": "^0.6.4",
