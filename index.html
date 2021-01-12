@@ -9,19 +9,19 @@
 
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
   <style type="text/css">
-    html, body { 
-      height:100%; 
-      padding:0px; 
-      margin:0px; 
+    html, body {
+      height:100%;
+      padding:0px;
+      margin:0px;
     }
-    .weekend{ 
-      background: #BD7990!important; 
+    .weekend{
+      background: #BD7990!important;
       color:white !important;
     }
     .gantt_task_scale, .gantt_task_vscroll {
       background-color: lightblue;
     }
-    
+
     .buttonload {
       background-color: #4CAF50;
       border: none;
@@ -76,14 +76,14 @@
   <div id="container">
     <div class="legend-wrapper">
       <div class="header-logo">
-        開発ユニットガントチャート
+        Development Gantt chart
       </div>
       <div id="legend">
       </div>
     </div>
     <div style="text-align: right;">
       <button class="buttonload" onclick="refresh(this)" id="refreshButton">
-        更新
+        Refresh
       </button>
     </div>
   </div>
@@ -92,25 +92,25 @@
     var HttpClient = function() {
       this.get = function(aUrl, aCallback) {
         var anHttpRequest = new XMLHttpRequest();
-        anHttpRequest.onreadystatechange = function() { 
+        anHttpRequest.onreadystatechange = function() {
         if (anHttpRequest.readyState == 4 && anHttpRequest.status == 200)
           aCallback(anHttpRequest.responseText);
         }
 
-        anHttpRequest.open("GET", aUrl, true);            
+        anHttpRequest.open("GET", aUrl, true);
         anHttpRequest.send(null);
       }
       this.postObject = function(aUrl, object, aCallback) {
         var anHttpRequest = new XMLHttpRequest();
-        anHttpRequest.onreadystatechange = function() { 
+        anHttpRequest.onreadystatechange = function() {
         if (anHttpRequest.readyState == 4 && anHttpRequest.status == 200)
           aCallback(anHttpRequest.responseText);
         }
 
-        anHttpRequest.open("POST", aUrl, true); 
-        anHttpRequest.setRequestHeader('Content-Type', 'application/json');           
+        anHttpRequest.open("POST", aUrl, true);
+        anHttpRequest.setRequestHeader('Content-Type', 'application/json');
         anHttpRequest.send(JSON.stringify(object));
-      } 
+      }
     };
     var client = new HttpClient();
     gantt.config.xml_date = "%m-%d-%Y";
@@ -118,50 +118,50 @@
     gantt.config.grid_width = 0;
     gantt.config.columns =  [
       {name:"text",
-      label:"Task name",  
-      tree:true, 
+      label:"Task name",
+      tree:true,
       width:'*' },
     ];
     gantt.attachEvent("onTaskClick", function(id, e) {
       var task = gantt.getTask(id);
       var newWin = window.open(task.htmlUrl, '_blank');
     });
-    
+
     gantt.attachEvent("onAfterTaskDrag", function(id, mode, e){
       var task = gantt.getTask(id);
       client.postObject("/updateIssue", task, function(response) {
         console.log(response);
       });
     });
-        
-    gantt.config.scale_unit = "week"; 
+
+    gantt.config.scale_unit = "week";
     gantt.config.date_scale = "%F, %d";
 
     gantt.config.subscales = [
       {unit:"month", step:1, date:"%M"}
     ];
     gantt.config.scale_height = 54;
-    
+
     gantt.attachEvent("onLoadStart", function(){
       client.get('/additionalData', function(response) {
         let data = JSON.parse(response);
-        
+
         // Handle Milestones
         let milestones = data.milestones;
         for (index in milestones) {
           let milestone = JSON.parse(milestones[index]);
           let date = new Date(milestone.dueOn);
-          gantt.addMarker({ 
-            start_date: date, 
-            css: "status_line", 
-            text: milestone.title, 
+          gantt.addMarker({
+            start_date: date,
+            css: "status_line",
+            text: milestone.title,
             title: milestone.description});
         }
         var date_to_str = gantt.date.date_to_str(gantt.config.task_date);
         var today = new Date();
         gantt.addMarker({ start_date: today, css: "today_line", text: "Today",  title:date_to_str(today)});
         gantt.renderMarkers();
-        
+
         // Handle labels
         var legend = document.getElementById("legend");
         while (legend.hasChildNodes()) {
@@ -183,15 +183,15 @@
     gantt.load("/data");
 
     refresh(document.getElementById("refreshButton"));
-    
+
     function refresh(element) {
-      element.innerHTML = '<i class="fa fa-refresh fa-spin"></i>更新中';
-      
+      element.innerHTML = '<i class="fa fa-refresh fa-spin"></i>Working';
+
       client.get("/refreshData", function(response) {
-        gantt.clearAll(); 
+        gantt.clearAll();
         gantt.load("/data");
-        
-        element.innerText = "更新";
+
+        element.innerText = "Refresh";
       });
     };
 
@@ -212,7 +212,7 @@
       applyConfig(scaleConfigs[2], project);
       gantt.render();
     };
-    
+
     // Zoom to fit functionality
     function applyConfig(config, dates) {
       gantt.config.scale_unit = config.scale_unit;
@@ -230,12 +230,12 @@
       if (dates) {
         gantt.config.start_date = gantt.date.add(dates.start_date, -2, config.unit);
         gantt.config.end_date = gantt.date.add(gantt.date[config.unit + "_start"](dates.end_date), 3, config.unit);
-      } 
+      }
       else {
         gantt.config.start_date = gantt.config.end_date = null;
       }
     };
-    
+
     // get number of columns in timeline
     function getUnitsBetween(from, to, unit, step) {
       var start = new Date(from);
@@ -247,7 +247,7 @@
       }
       return units;
     };
-    
+
     //Setting available scales
     var scaleConfigs = [
       // minutes
