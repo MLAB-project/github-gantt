@@ -26,7 +26,7 @@ sh ./setup.sh
 // Linux
 bash ./setup.sh
 ```
-This will ask for your Github API token, organization name, and repo name. It will then generate a config file at
+This will ask for your [Github API token](https://github.com/settings/tokens), organization name, and repo name. It will then generate a config file at
 ```
 /config/config.js
 ```
