@@ -8,7 +8,7 @@
     "dateformat": "^2.0.0",
     "dhtmlx-gantt": "^7.0.11",
     "express": "^4.17.1",
-    "express-ipfilter": "^0.3.1",
+    "express-ipfilter": "^1.1.2",
     "octokat": "^0.6.4",
     "realm": "^10.1.2"
   },
