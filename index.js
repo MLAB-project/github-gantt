@@ -143,6 +143,31 @@ else {
 }
 
 let repo = gh.repos(config.GITHUB_ORG_NAME, config.GITHUB_REPO_NAME);
+let project = gh.projects(config.GITHUB_ORG_NAME);
+
+
+function getProjects(completion) {
+  project.fetch()
+  /*.then((labels) => {
+    let items = labels.items;
+    if (utilities.isArray(items)) {
+      realm.write(() => {
+        for (index in items) {
+          let label = items[index];
+          realm.create('Label', {
+            id: label.id,
+            url: label.url,
+            name: label.name,
+            color: label.color,
+            default: label.default,
+          }, true);
+        }
+      });
+    }
+    completion();
+  });*/
+}
+
 
 function getLabels(completion) {
   repo.labels.fetch()
@@ -384,6 +409,9 @@ app.get('/refreshData', function (req, res) {
   });
   getMilestones(() => {
     console.log("--> Retrieved Milestones");
+  });
+  getProjects(() => {
+    console.log("--> Retrieved Projects");
   });
   repo.issues.fetch({state: "all", per_page: 100})
   .then((issues) => {
