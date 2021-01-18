@@ -21,7 +21,7 @@ app.use(function(req, res, next) {
 
     if (ips.includes(ipAddr)) {
       next();
-    } else { 
+    } else {
       res.status(403).end('forbidden');
     }
   } else {
@@ -45,7 +45,7 @@ const TaskSchema = {
     url: 'string',
     htmlUrl: 'string',
     number: 'int',
-    // Indicates the state of the issues to return. 
+    // Indicates the state of the issues to return.
     // Can be either open, closed, or all.
     state: 'string',
     isDeleted: 'bool',
@@ -53,15 +53,15 @@ const TaskSchema = {
     //
     // "task" - a regular task (default value).
     //
-    // "project" - a task that starts, when its earliest child task starts, and 
-    // ends, when its latest child ends. The start_date, end_date, duration 
+    // "project" - a task that starts, when its earliest child task starts, and
+    // ends, when its latest child ends. The start_date, end_date, duration
     // properties are ignored for such tasks.
     //
-    // "milestone" - a zero-duration task that is used to mark out important 
-    // dates of the project. The duration, progress, end_date properties are 
+    // "milestone" - a zero-duration task that is used to mark out important
+    // dates of the project. The duration, progress, end_date properties are
     // ignored for such tasks.
     type: {type: 'string', optional: true},
-    // the id of the parent task. 
+    // the id of the parent task.
     // The id of the root task is specified by the root_id config
     parent: {type: 'int', optional: true},
     // the task's level in the tasks hierarchy (zero-based numbering).
@@ -70,7 +70,7 @@ const TaskSchema = {
     progress: {type: 'double', optional: true},
     // the task's category.
     category: {type: 'string', optional: true},
-    // specifies whether the task branch will be opened initially 
+    // specifies whether the task branch will be opened initially
     // (to show child tasks).
     open: {type: 'bool', optional: true},
     // the date when a task is scheduled to be completed. Used as an alternative
@@ -133,7 +133,7 @@ if (config.RMP_ADMIN_TOKEN &&
           },
         schema: [TaskSchema, LabelSchema, MilestoneSchema],
       });
-  }  
+  }
 }
 else {
   realm = new Realm({
@@ -212,7 +212,7 @@ function processIssues(issues, completion, idArray) {
   if (!utilities.isArray(idArray)) {
     idArray = [];
   }
-  
+
   realm.write(() => {
     for (index in issues.items) {
       let issue = issues.items[index];
@@ -222,11 +222,11 @@ function processIssues(issues, completion, idArray) {
       var color = null;
       var progress = null;
       var category = null;
-      
+
       // find keywords
       if (issue.body != null) {
         var lines = issue.body.split(/[\r\n]+/);
-        
+
         for (var j = 0; j < lines.length; j++) {
           if (!lines[j].indexOf(config.START_DATE_STRING)) {
             let date = new Date(lines[j].replace(config.START_DATE_STRING, ''));
@@ -264,7 +264,7 @@ function processIssues(issues, completion, idArray) {
           }
         }
       }
-      
+
       realm.create('Task', {
         text: utilities.sanitizeStringNonNull(issue.title),
         start_date:  startDate,
@@ -282,11 +282,11 @@ function processIssues(issues, completion, idArray) {
         progress: progress,
         category: category,
       }, true);
-      
+
       idArray.push(issue.id);
     }
   });
-  
+
   if (utilities.isString(issues.nextPageUrl)) {
     issues.nextPage.fetch()
     .then((moreIssues) => {
@@ -298,11 +298,11 @@ function processIssues(issues, completion, idArray) {
     oldIds = realm.objects('Task').map(function(task) {
       return task.id;
     });
-    
+
     deletedIds = oldIds.filter(function(el) {
       return idArray.indexOf(el) < 0;
     });
-    
+
     realm.write(() => {
       for (index in deletedIds) {
         let deletedId = deletedIds[index];
@@ -310,7 +310,7 @@ function processIssues(issues, completion, idArray) {
         task.isDeleted = true;
       }
     });
-    
+
     completion();
   }
 }
@@ -355,26 +355,26 @@ app.get('/data', function (req, res) {
 
 app.get('/additionalData', function (req, res) {
   var data = {};
-  
+
   // Handle milestones
   let milestones = realm.objects('Milestone').filtered('dueOn != null');
   data.milestones = milestones.map((object) => {
     return JSON.stringify(object);
   });
-  
+
   // Handle labels
   var hash = {},labels = [];
   realm.objects('Task').filtered('isDeleted = false AND state = "open" AND end_date != null AND label != null').sorted('label', true).forEach((object, index) => {
     if (!hash[object.label]) {
-      hash[object.label] = true; 
+      hash[object.label] = true;
       labels.push({
         name: object.label,
         color: object.color,
-      }); 
+      });
     }
   });
   data.labels = labels;
-  
+
   res.send(data);
 });
 
@@ -401,9 +401,10 @@ app.post('/updateIssue', bodyParser.json(), function (req, res) {
   }
   let chartTask = req.body;
   var task = realm.objectForPrimaryKey('Task', chartTask.id);
-  if (utilities.isRealmObject(task)) {
+  if (!task) return res.status(500);{
     // Write to Realm first
-    realm.write(() => {
+      //console.log('Writing to Realm');
+      realm.write(() => {
       task.start_date = new Date(chartTask.start_date);
       task.end_date = new Date(chartTask.end_date);
       task.duration = utilities.sanitizeInt(chartTask.duration);
@@ -428,7 +429,11 @@ app.post('/updateIssue', bodyParser.json(), function (req, res) {
       body: task.body,
     }).then((issue) => {
       res.send("Success");
-    });
+      console.log('Github issue %s updated', task.number);
+    }).catch((error) => {
+      console.error(error);
+      res.status(500).send({ error: 'Github issue update failed' });
+      });
   }
 });
 
